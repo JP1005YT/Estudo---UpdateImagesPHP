@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Teste</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+    <input type="file" id="file" name="file">
+    <div>
+    </div>
+    <script>
+        let element = document.getElementById('file')
+        element.addEventListener("change", Query_Cadastrar);
+
+        let nome_arquivo = "JPLAYS"
+        const allowedExtensions = ['jpg', 'png', 'gif'];
+
+        async function Query_Cadastrar(event) {
+            const arquivo = event.target.files[0];
+            const formData = new FormData();
+
+            const fileExtension = arquivo.name.split('.').pop().toLowerCase();
+            if (!allowedExtensions.includes(fileExtension)) {
+                alert('Extensão de arquivo não permitida');
+                return;
+            }
+
+            formData.append('arquivo', arquivo);
+            formData.append('nome_arquivo', nome_arquivo);
+
+            const dados = await fetch('pull.php', {
+                method: "POST",
+                body: formData
+            });
+
+            const resposta = await dados.json();
+            console.log(resposta);
+            if(resposta){
+                document.querySelector('div').innerHTML = ''
+
+                let img = document.createElement('img')
+                img.setAttribute('src',`images/${nome_arquivo}.${resposta}?cache=${Math.random() * 10}`)
+
+                document.querySelector('div').appendChild(img)
+            }
+            }
+    </script>
+</body>
+</html>
